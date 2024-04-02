@@ -1,17 +1,23 @@
-import openai
+from openai import OpenAI
 import os
-
-openai.api_key = os.getenv("OPENAI_API_KEY")
+api = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=api)
 
 def consulta_nlp(texto):
     try:
+        # Preparar los mensajes para la API
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": texto}
+        ]
+
         # Petición API
-        response = openai.chat.completions.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=texto
+            messages=messages
         )
         # Acceso a la respuesta actualizado
-        return response['choices'][0].message
+        return response.choices[0].message.content
     except Exception as e:
         return str(e)
 
